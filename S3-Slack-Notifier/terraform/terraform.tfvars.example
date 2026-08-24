@@ -1,0 +1,28 @@
+aws_region   = "ap-south-1"
+project_name = "s3-slack-notifier"
+environment  = "production"
+
+tags = {
+  Owner = "shakeelsaga" # Replace with your own name/handle before deploying
+}
+
+# --- Choose ONE of the two bucket modes below ---
+
+# Mode A (default): create one new bucket.
+# Leave existing_bucket_names empty. new_bucket_name is optional - blank
+# auto-generates a globally-unique name.
+existing_bucket_names = []
+new_bucket_name       = ""
+
+# Mode B: register one or more buckets that already exist. Only list
+# buckets that don't already have some other notification configured -
+# aws_s3_bucket_notification replaces a bucket's ENTIRE notification
+# config on apply, it does not merge with what's already there.
+# existing_bucket_names = ["team-uploads-bucket", "client-drop-bucket"]
+
+lambda_timeout     = 30
+lambda_memory_size = 128
+log_retention_days = 14
+
+# Required for this function to actually report success - see variables.tf.
+slack_webhook_url = ""

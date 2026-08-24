@@ -1,1 +1,11 @@
 /.DS_Store
+
+**/terraform/.terraform/
+**/terraform/build/
+**/terraform/*.tfstate
+**/terraform/*.tfstate.*
+**/terraform/*.tfvars
+!**/terraform/terraform.tfvars.example
+**/terraform/crash.log
+**/terraform/override.tf
+**/terraform/override.tf.json

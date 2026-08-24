@@ -20,6 +20,7 @@ Each function is intentionally scoped to solve one operational problem end-to-en
 ### 1. S3 to Slack Notifier
 **Type:** Observability & Notification
 **Location:** [`S3-Slack-Notifier/lambda_function.py`](./S3-Slack-Notifier/lambda_function.py)
+**Terraform:** [`S3-Slack-Notifier/terraform`](./S3-Slack-Notifier/terraform)
 
 A secure, event-driven notification system that bridges AWS S3 and Slack. It instantly alerts a team channel whenever a new file is uploaded to a specific S3 bucket.
 
@@ -37,6 +38,7 @@ A secure, event-driven notification system that bridges AWS S3 and Slack. It ins
 ### 2. EBS Lifecycle Manager
 **Type:** Cost Optimization & Disaster Recovery
 **Location:** [`EBS-Lifecycle-Manager/lambda_function.py`](./EBS-Lifecycle-Manager/lambda_function.py)
+**Terraform:** [`EBS-Lifecycle-Manager/terraform`](./EBS-Lifecycle-Manager/terraform)
 
 A scheduled automation function designed to manage EC2 snapshot lifecycles with a strong emphasis on cost control and safe deletion.
 
@@ -62,6 +64,7 @@ This function reflects real-world backup automation patterns where retention pol
 ### 3. Security Group Auditor
 **Type:** Compliance & Remediation
 **Location:** [`Security-Group-Auditor/lambda_function.py`](./Security-Group-Auditor/lambda_function.py)
+**Terraform:** [`Security-Group-Auditor/terraform`](./Security-Group-Auditor/terraform)
 
 An auto-remediation function acting as a "Compliance Guardrail." It continuously scans network perimeters to detect and neutralize high-risk misconfigurations.
 
@@ -76,6 +79,19 @@ An auto-remediation function acting as a "Compliance Guardrail." It continuously
 
 ---
 
+## Infrastructure as Code
+
+Each function has a self-contained Terraform configuration in its own `terraform/` subfolder, next to its `lambda_function.py`. `terraform apply` provisions everything that used to require manual console setup: the function itself (packaged straight from the existing source, no build step to remember), a least-privilege IAM role scoped to exactly what that function's code calls, its trigger (S3 event notification or EventBridge schedule), and a CloudWatch log group with finite retention.
+
+The three configurations are independent — no shared state, no shared module — so they can be applied, planned, and destroyed on their own. Each `terraform/README.md` documents that function's variables, usage, and specific limitations; read it before applying to a real account, especially for `Security-Group-Auditor`.
+
+```bash
+cd <Function-Folder>/terraform
+cp terraform.tfvars.example terraform.tfvars   # edit as needed
+terraform init
+terraform apply -var-file=terraform.tfvars
+```
+
 ## Design Philosophy
 
 - Prefer multiple small Lambdas over monolithic automation  
@@ -89,6 +105,9 @@ These functions are designed to be readable, auditable, and easy to extend.
 
 ## How to Use
 
+**Option A — Terraform (recommended):** see [Infrastructure as Code](#infrastructure-as-code) above.
+
+**Option B — Manual:**
 1.  **Clone the repo:**
     ```bash
     git clone [https://github.com/shakeelsaga/Serverless-Functions-Collection.git](https://github.com/shakeelsaga/Serverless-Functions-Collection.git)
@@ -104,6 +123,7 @@ These functions are designed to be readable, auditable, and easy to extend.
 * **AWS SDK:** Boto3 (Core integration)
 * **Services:** AWS Lambda, Amazon EventBridge, S3, EC2
 * **Libraries:** `urllib` (Standard library for lightweight HTTP requests)
+* **IaC:** Terraform (AWS, archive, random providers)
 
 ## Contributing
 I am actively adding new automation patterns to this repository. If you have a suggestion for a useful Lambda function, feel free to open an issue or pull request!

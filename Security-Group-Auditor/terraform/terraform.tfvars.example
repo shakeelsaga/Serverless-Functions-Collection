@@ -1,0 +1,18 @@
+aws_region   = "us-east-1"
+project_name = "security-group-auditor"
+environment  = "production"
+
+tags = {
+  Owner = "shakeelsaga" # Replace with your own name/handle before deploying
+}
+
+# Every 15 minutes. Tighten or loosen based on how quickly you need
+# world-open SSH rules closed.
+schedule_expression = "rate(15 minutes)"
+
+lambda_timeout      = 300
+lambda_memory_size  = 256
+log_retention_days  = 14
+
+# Leave blank to run without Slack notifications.
+slack_webhook_url = ""
